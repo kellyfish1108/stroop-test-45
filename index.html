@@ -942,32 +942,54 @@
           `;
         }
 
-        if (resultsTableBody) {
-          resultsTableBody.innerHTML = "";
-          records.forEach(r => {
-            const choiceCfg = COLOR_BY_KEY[r.chosenKey];
-            const questionText = `${r.wordChar}字 / ${r.inkColorLabel}`;
-            const choiceHtml = `
-              <span class="choice-symbol" style="color:${choiceCfg.hex};">
-                ${choiceCfg.char}
-              </span>
-            `;
-            const resultCell = r.isCorrect
-              ? '<span class="result-ok-dot"></span>'
-              : '<span class="result-bad">✘</span>';
+       if (resultsTableBody) {
+  resultsTableBody.innerHTML = "";
+  records.forEach(r => {
+    const inkCfg    = COLOR_BY_KEY[r.inkColorKey];   // 題目字的顏色
+    const choiceCfg = COLOR_BY_KEY[r.chosenKey];     // 使用者作答的顏色
 
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${r.trialNumber}</td>
-              <td>${questionText}</td>
-              <td>${r.correctAnswer}</td>
-              <td>${choiceHtml}</td>
-              <td>${resultCell}</td>
-              <td>${r.reactionTimeMs}</td>
-            `;
-            resultsTableBody.appendChild(tr);
-          });
-        }
+    // 題目：用字本身＋字的顏色顯示
+    const questionHtml = `
+      <span class="choice-symbol"
+            style="color:${inkCfg.hex};"
+            title="${r.wordChar}字 / ${r.inkColorLabel}">
+        ${r.wordChar}
+      </span>
+    `;
+
+    // 正確答案：用顏色字顯示（紅黃藍綠）
+    const correctHtml = `
+      <span class="choice-symbol"
+            style="color:${inkCfg.hex};"
+            title="${r.correctAnswer}">
+        ${inkCfg.char}
+      </span>
+    `;
+
+    // 您的選擇（維持原本樣式）
+    const choiceHtml = `
+      <span class="choice-symbol" style="color:${choiceCfg.hex};">
+        ${choiceCfg.char}
+      </span>
+    `;
+
+    const resultCell = r.isCorrect
+      ? '<span class="result-ok-dot"></span>'
+      : '<span class="result-bad">✘</span>';
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${r.trialNumber}</td>
+      <td>${questionHtml}</td>
+      <td>${correctHtml}</td>
+      <td>${choiceHtml}</td>
+      <td>${resultCell}</td>
+      <td>${r.reactionTimeMs}</td>
+    `;
+    resultsTableBody.appendChild(tr);
+  });
+}
+
 
         showPage(page4);
       }
